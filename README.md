@@ -2,7 +2,8 @@
 
 **Newb Paretion** is a RenderDragon successor to the legacy GLSL shader, forked from [Newb X Legacy](https://github.com/devendrn/newb-x-mcbe) shader. It is a shader focus on visual effect with semi-realistic theme. It supports Minecraft Bedrock 1.26+ (Windows/Android/iOS).
 
-About [Newb X Legacy](https://github.com/devendrn/newb-x-mcbe)
+## About [Newb X Legacy](https://github.com/devendrn/newb-x-mcbe)
+
 It is an enhanced vanilla shader that focuses on being lightweight and having soft aesthetics. It supports Minecraft Bedrock 1.26+ (Windows/Android/iOS).
 
 <br>
