@@ -52,6 +52,14 @@ void main() {
       color.a *= smoothstep(0.0, 0.7, vDir.y);
     #endif
 
+    #ifdef NP_VOLUME_CLOUD
+      color.a *= 0.0;
+    #endif
+
+    #ifdef NP_DISABLE_NEWB_CLOUD
+      color.a *= 0.0;
+    #endif
+
     color.rgb = colorCorrection(color.rgb);
   #endif
 

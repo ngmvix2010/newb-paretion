@@ -35,6 +35,22 @@ void main() {
       skyColor += NL_GALAXY_STARS*nlRenderGalaxy(viewDir, env.fogCol, env, v_underwaterRainTimeDay.z);
     #endif
 
+    vec3 cloudPos = viewDir / viewDir.y;
+    #ifdef NP_CIRRUS_CLOUD
+      float cirrus = NP_CloudCirrus(cloudPos, v_underwaterRainTimeDay.z);
+      skyColor = mix(skyColor, 1.3*skycol.horizon, cirrus);
+    #endif
+    #ifdef NP_VOLUME_CLOUD
+      vec4 cloudVol = vec4(0.0,0.0,0.0,0.0);
+      #if NP_VOLUME_CLOUD == 2
+        cloudPos.xz *= 0.6;
+        cloudVol = NP_RenderClouds2D(cloudPos, normalize(cloudPos), v_underwaterRainTimeDay.z, v_underwaterRainTimeDay.w);
+        cloudVol.rgb *= 1.3*skycol.horizon;
+      #elif NP_VOLUME_CLOUD == 3
+        cloudVol = vec4(0.0,0.0,0.0,0.0);
+      #endif
+      skyColor = mix(skyColor, cloudVol.rgb, cloudVol.a);
+    #endif
     skyColor = colorCorrection(skyColor);
 
     gl_FragColor = vec4(skyColor, 1.0);
