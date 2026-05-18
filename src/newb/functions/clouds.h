@@ -105,7 +105,7 @@ float cloudsNoiseVr(vec2 p, float t) {
   n *= fastVoronoi2(3.0*p + t, 1.5);
   n *= fastVoronoi2(9.0*p + t, 0.4);
   n *= fastVoronoi2(27.0*p + t, 0.1);
-  //n *= fastVoronoi2(82.0*pos + t, 0.02); // more quality
+  n *= fastVoronoi2(82.0*p + t, 0.02); // more quality
   return n*n;
 }
 
@@ -181,6 +181,86 @@ vec4 nlCloudAuroraReflection(nl_skycolor skycol, nl_environment env, vec3 viewDi
   #endif
 
   return refl;
+}
+
+/* Newb X Paretion Zone */
+
+// Simple 2D Cirrus Clouds For NXP
+float NP_CloudCirrus(vec3 pos, float time){
+    float v = NP_CIRRUS_CLOUD_SPEED;
+	  vec2 uv = pos.xz * NP_CIRRUS_CLOUD_SCALE;
+    
+    float df = 0.75*smoothstep(0.4, 0.7, fbm(vec2(uv.x + time*v*0.3, uv.y*0.2 + time*v)));
+    df *= fbm(uv*2.0);
+	  return df;
+}
+
+float NP_CloudMap(vec3 pos, float time, float dh, float getRain) {
+    float rainCloudFactor = 1.0 - getRain;
+    float density;
+    float density2;
+    vec3 p = pos*0.86;
+    p.x += NP_VOLUME_CLOUD_SPEED*time;
+    //p.xz += 0.2*fastVoronoi2(p.xz*2.0, 3.0);
+    
+    density *= fbm(p.xz);
+    density = fbm(p.xz);
+    if (NP_VORO_ENABLED == 1){
+    	density *= fastVoronoi2(p.xz, 1.8);
+    }
+    density *= smoothstep((1.0 - NP_VOLUME_CLOUD_DENSITY1)*rainCloudFactor, 1.0, density);
+    
+    density2 = fbm(p.xz*0.5); 
+    if (NP_VORO_ENABLED == 1){
+    	density2*= fastVoronoi2(p.xz, 0.8);
+    }
+    density2 *= smoothstep((1.0 - NP_VOLUME_CLOUD_DENSITY2)*rainCloudFactor , 0.7, density2);
+    //density2 *= noise3D(pos)*smoothstep(0.1, 0.3, density2);
+    
+    float fndf = min(1.0, (density + density2));
+    if (NP_VORO_ENABLED == 1){
+    	fndf *= mix(1.0, fastVoronoi2(p.xz*2.0 + fbm(p.xz), 3.0), density);
+    }
+    
+    return fndf;
+}
+
+vec4 NP_RenderClouds2D(vec3 pos, vec3 viewdir, float time, float getRain){
+    float dh = 0.0;
+    vec3 cloudC = vec3(0.3);
+    float alpha = 0.0;
+    float df;
+    float d2 = 0.0;
+
+    float cloud_height = 0.0;
+    float cloud_thickness = 15.0;
+
+    float dist_to_cloud = abs(pos.y - cloud_height);
+
+    float cloud_factor = smoothstep(cloud_thickness, 0.0, dist_to_cloud);
+
+    float scale_factor = mix(8.0, 3.0, cloud_factor)*1.0; 
+    pos.xz *= scale_factor;
+
+    for (int i = 0; i < 10; i++){
+        if (dh <= 5.0){
+            d2 += 0.2;
+            pos.xz *= 0.97;
+        } else {
+            d2 -= 0.2;
+            pos.xz *= 1.03;
+        }
+        alpha *= 0.86;
+        
+        df = NP_CloudMap(pos, time, d2, getRain);
+        
+        df *= cloud_factor;
+
+        alpha = mix(alpha, 1.0, df);
+        cloudC = mix(cloudC, cloudC + 0.05, 1.0 - alpha);
+    }
+    
+    return vec4(cloudC, alpha);
 }
 
 #endif

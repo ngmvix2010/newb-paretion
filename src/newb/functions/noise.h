@@ -89,4 +89,32 @@ float movingNoise2D(vec2 pos, float t, float f) {
   return mix(n0*n0, n1*n1, f);
 }
 
+#define NUM_OCTAVES 7
+
+float fbm(vec2 x) {
+	float v = 0.0;
+	float a = 0.5;
+	vec2 shift = vec2(100);
+	// Rotate to reduce axial bias
+    mat2 rot = mat2(cos(0.5), sin(0.5), -sin(0.5), cos(0.50));
+	for (int i = 0; i < NUM_OCTAVES; ++i) {
+		v += a * noise2D(x);
+		x = rot * x * 2.0 + shift;
+		a *= 0.5;
+	}
+	return v;
+}
+
+float fbm(vec3 x) {
+	float v = 0.0;
+	float a = 0.5;
+	vec3 shift = vec3(100);
+	for (int i = 0; i < NUM_OCTAVES; ++i) {
+		v += a * noise3D(x);
+		x = x * 2.0 + shift;
+		a *= 0.5;
+	}
+	return v;
+}
+
 #endif
