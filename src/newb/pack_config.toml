@@ -1,5 +1,5 @@
 name = "Newb Paretion"
-version = [0, 1, 1]
+version = [0, 26, 5]
 min_supported_mc_version = [1, 26, 10]
 description = '''
 §c%w
@@ -27,12 +27,12 @@ credits = '''
 
 # subpacks are arranged in left to right order
 # right-most subpack is enabled by default
-[[subpack]]
-define = "VOLUMETRIC"
-materials = ["Clouds", "RenderChunk", "Sky"]
-description = '''
-Volumetric Clouds (Testing)
-'''
+#[[subpack]]
+#define = "VOLUMETRIC"
+#materials = ["Clouds", "RenderChunk", "Sky"]
+#description = '''
+#Volumetric Clouds (Testing)
+#'''
 
 [[subpack]]
 define = "LOWPOLY_CHUNK"
